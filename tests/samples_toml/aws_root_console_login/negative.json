@@ -1,0 +1,4 @@
+[
+  { "event": { "action": "ConsoleLogin" }, "aws": { "cloudtrail": { "user_identity": { "type": "IAMUser" } } } },
+  { "event": { "action": "AssumeRole" }, "aws": { "cloudtrail": { "user_identity": { "type": "Root" } } } }
+]

@@ -1,0 +1,4 @@
+[
+  { "process": { "name": "powershell.exe", "command_line": "powershell.exe -nop -w hidden -enc SQBFAFgAIAAoAE4A" } },
+  { "process": { "name": "powershell.exe", "command_line": "powershell.exe -EncodedCommand JABjAGwAaQBlAG4AdAA9" } }
+]

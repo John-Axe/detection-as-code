@@ -1,0 +1,3 @@
+[
+  { "event": { "action": "ConsoleLogin" }, "aws": { "cloudtrail": { "user_identity": { "type": "Root" } } } }
+]

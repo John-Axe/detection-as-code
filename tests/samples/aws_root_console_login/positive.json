@@ -1,0 +1,7 @@
+[
+  {
+    "eventName": "ConsoleLogin",
+    "userIdentity": { "type": "Root", "arn": "arn:aws:iam::123456789012:root" },
+    "responseElements": { "ConsoleLogin": "Success" }
+  }
+]

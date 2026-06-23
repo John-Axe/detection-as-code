@@ -1,0 +1,39 @@
+[metadata]
+creation_date = "2026/06/22"
+updated_date = "2026/06/22"
+maturity = "production"
+
+[rule]
+author = ["Joao Machado"]
+rule_id = "a1c8b3d2-5f47-4e90-8b16-9c2d3a4e5f60"
+name = "AWS Root Account Console Login"
+description = """
+Detects an interactive console login by the AWS account root user. Root should
+be locked away behind MFA and used almost never, so any console login is
+high-signal and worth alerting on.
+"""
+severity = "high"
+risk_score = 73
+type = "query"
+language = "kuery"
+index = ["logs-aws.cloudtrail-*", "filebeat-*"]
+query = '''
+event.action : "ConsoleLogin" and aws.cloudtrail.user_identity.type : "Root"
+'''
+references = ["https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html"]
+false_positives = ["Rare, expected break-glass root usage by an administrator"]
+
+[[rule.threat]]
+framework = "MITRE ATT&CK"
+[rule.threat.tactic]
+id = "TA0001"
+name = "Initial Access"
+reference = "https://attack.mitre.org/tactics/TA0001/"
+[[rule.threat.technique]]
+id = "T1078"
+name = "Valid Accounts"
+reference = "https://attack.mitre.org/techniques/T1078/"
+[[rule.threat.technique.subtechnique]]
+id = "T1078.004"
+name = "Cloud Accounts"
+reference = "https://attack.mitre.org/techniques/T1078/004/"

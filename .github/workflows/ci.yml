@@ -1,0 +1,32 @@
+name: detection-ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate Sigma rules (syntax + schema)
+        run: sigma check rules/
+
+      - name: Validate Elastic TOML rules (schema + ATT&CK)
+        run: python tests/validate_toml.py
+
+      - name: Run detection unit tests (Sigma + TOML)
+        run: pytest -v

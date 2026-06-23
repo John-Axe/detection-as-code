@@ -1,0 +1,4 @@
+[
+  { "process": { "name": "powershell.exe", "command_line": "powershell.exe -File C:\\scripts\\nightly_backup.ps1" } },
+  { "process": { "name": "cmd.exe", "command_line": "cmd.exe /c whoami" } }
+]
