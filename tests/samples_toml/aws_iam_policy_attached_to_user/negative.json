@@ -1,0 +1,4 @@
+[
+  { "event": { "action": "AttachRolePolicy" } },
+  { "event": { "action": "DetachUserPolicy" } }
+]

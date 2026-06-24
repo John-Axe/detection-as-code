@@ -1,0 +1,12 @@
+[
+  {
+    "eventName": "AttachUserPolicy",
+    "userIdentity": { "type": "IAMUser", "userName": "deploy-bot" },
+    "requestParameters": { "userName": "deploy-bot", "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess" }
+  },
+  {
+    "eventName": "PutUserPolicy",
+    "userIdentity": { "type": "IAMUser", "userName": "deploy-bot" },
+    "requestParameters": { "userName": "deploy-bot", "policyName": "inline-admin" }
+  }
+]

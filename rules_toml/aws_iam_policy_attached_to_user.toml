@@ -1,0 +1,40 @@
+[metadata]
+creation_date = "2026/06/22"
+updated_date = "2026/06/22"
+maturity = "production"
+
+[rule]
+author = ["Joao Machado"]
+rule_id = "9f3d7b21-6c4a-4e85-b1f0-2d7a9c5e8b46"
+name = "IAM Policy Attached to a User"
+description = """
+Detects an IAM managed or inline policy being attached to a user. Attackers
+who compromise a low-privilege identity often attach a permissive policy
+(e.g. AdministratorAccess) to escalate privileges; this is also a useful
+signal for unreviewed permission changes outside of normal IaC workflows.
+"""
+severity = "medium"
+risk_score = 47
+type = "query"
+language = "kuery"
+index = ["logs-aws.cloudtrail-*", "filebeat-*"]
+query = '''
+event.action : ("AttachUserPolicy" or "PutUserPolicy")
+'''
+references = ["https://attack.mitre.org/techniques/T1098/001/"]
+false_positives = ["Legitimate IAM administration through approved infrastructure-as-code pipelines"]
+
+[[rule.threat]]
+framework = "MITRE ATT&CK"
+[rule.threat.tactic]
+id = "TA0004"
+name = "Privilege Escalation"
+reference = "https://attack.mitre.org/tactics/TA0004/"
+[[rule.threat.technique]]
+id = "T1098"
+name = "Account Manipulation"
+reference = "https://attack.mitre.org/techniques/T1098/"
+[[rule.threat.technique.subtechnique]]
+id = "T1098.001"
+name = "Additional Cloud Credentials"
+reference = "https://attack.mitre.org/techniques/T1098/001/"

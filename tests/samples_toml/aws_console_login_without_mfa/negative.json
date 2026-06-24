@@ -1,0 +1,20 @@
+[
+  {
+    "event": { "action": "ConsoleLogin" },
+    "aws": {
+      "cloudtrail": {
+        "response_elements": { "console_login": "Success" },
+        "additional_event_data": { "mfa_used": "Yes" }
+      }
+    }
+  },
+  {
+    "event": { "action": "ConsoleLogin" },
+    "aws": {
+      "cloudtrail": {
+        "response_elements": { "console_login": "Failure" },
+        "additional_event_data": { "mfa_used": "No" }
+      }
+    }
+  }
+]

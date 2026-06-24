@@ -1,0 +1,12 @@
+[
+  {
+    "eventName": "AttachRolePolicy",
+    "userIdentity": { "type": "IAMUser", "userName": "deploy-bot" },
+    "requestParameters": { "roleName": "ci-deploy-role", "policyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess" }
+  },
+  {
+    "eventName": "DetachUserPolicy",
+    "userIdentity": { "type": "IAMUser", "userName": "deploy-bot" },
+    "requestParameters": { "userName": "deploy-bot", "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess" }
+  }
+]

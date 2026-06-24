@@ -1,0 +1,28 @@
+title: IAM Policy Attached to a User
+id: e7c5a9d1-4f36-4e8a-b7d2-1c9f8a6e3b52
+status: experimental
+description: >
+  Detects an IAM managed or inline policy being attached to a user. Attackers
+  who compromise a low-privilege identity often attach a permissive policy
+  (e.g. AdministratorAccess) to escalate privileges; this is also a useful
+  signal for unreviewed permission changes outside of normal IaC workflows.
+references:
+  - https://attack.mitre.org/techniques/T1098/001/
+author: Joao Machado
+date: 2026-06-22
+tags:
+  - attack.privilege-escalation
+  - attack.persistence
+  - attack.t1098.001
+logsource:
+  product: aws
+  service: cloudtrail
+detection:
+  selection:
+    eventName:
+      - AttachUserPolicy
+      - PutUserPolicy
+  condition: selection
+falsepositives:
+  - Legitimate IAM administration through approved infrastructure-as-code pipelines
+level: medium

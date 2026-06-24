@@ -1,0 +1,8 @@
+[
+  {
+    "eventName": "ConsoleLogin",
+    "userIdentity": { "type": "IAMUser", "userName": "deploy-bot" },
+    "responseElements": { "ConsoleLogin": "Success" },
+    "additionalEventData": { "MFAUsed": "No" }
+  }
+]

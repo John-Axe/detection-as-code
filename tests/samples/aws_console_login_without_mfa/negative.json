@@ -1,0 +1,14 @@
+[
+  {
+    "eventName": "ConsoleLogin",
+    "userIdentity": { "type": "IAMUser", "userName": "alice" },
+    "responseElements": { "ConsoleLogin": "Success" },
+    "additionalEventData": { "MFAUsed": "Yes" }
+  },
+  {
+    "eventName": "ConsoleLogin",
+    "userIdentity": { "type": "IAMUser", "userName": "bob" },
+    "responseElements": { "ConsoleLogin": "Failure" },
+    "additionalEventData": { "MFAUsed": "No" }
+  }
+]
