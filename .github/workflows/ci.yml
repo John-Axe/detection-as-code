@@ -28,5 +28,14 @@ jobs:
       - name: Validate Elastic TOML rules (schema + ATT&CK)
         run: python tests/validate_toml.py
 
+      - name: Convert Sigma rules to Elastic Lucene queries
+        run: ./scripts/convert_rules.sh
+
       - name: Run detection unit tests (Sigma + TOML)
         run: pytest -v
+
+      - name: Upload converted Elastic queries
+        uses: actions/upload-artifact@v4
+        with:
+          name: elastic-lucene-queries
+          path: build/
