@@ -11,7 +11,7 @@ references:
 author: Joao Machado
 date: 2026-06-22
 tags:
-  - attack.initial_access
+  - attack.initial-access
   - attack.t1078.004
 logsource:
   product: aws
