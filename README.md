@@ -1,6 +1,6 @@
 # Detection-as-Code
 
-[![detection-ci](https://github.com/YOUR_GITHUB_USERNAME/detection-as-code/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_GITHUB_USERNAME/detection-as-code/actions/workflows/ci.yml)
+[![detection-ci](https://github.com/John-Axe/detection-as-code/actions/workflows/ci.yml/badge.svg)](https://github.com/John-Axe/detection-as-code/actions/workflows/ci.yml)
 
 Manage SIEM detections like software: every rule is version-controlled, reviewed
 via pull request, automatically validated, and **unit-tested against sample logs
@@ -31,31 +31,38 @@ reviewed, or tested. This repo treats them as code:
 
 ## How it works
 
-```
-rules/*.yml      ─► sigma check          ─┐
-rules_toml/*.toml ─► validate_toml.py     ├─► must pass before merge
-                                          │
-pytest ─► sigma_eval  evaluates Sigma rules vs tests/samples/<rule>/{positive,negative}.json
-       └► kql_eval    evaluates TOML KQL queries vs tests/samples_toml/<rule>/{positive,negative}.json
+```mermaid
+flowchart LR
+    A[Sigma rule YAML\nrules/*.yml] --> B[sigma check\nschema validation]
+    B --> C[sigma convert\nElastic Lucene/EQL]
+    C --> D[build/*.lucene\nconverted-query artifact]
+    A --> E[Unit test vs sample events\npytest + sigma_eval\ntests/samples/&lt;rule&gt;/]
+    E -->|TP fires, TN silent| F[Merge to main]
+    B -.fails on schema error.-> G[Blocked]
+    E -.fails on wrong fire/silence.-> G
 ```
 
 Every push and pull request runs all of it in GitHub Actions
-(`.github/workflows/ci.yml`). A red check blocks the merge.
+(`.github/workflows/ci.yml`). A red check blocks the merge — a rule with no
+passing tests, a broken schema, or a query that fails to convert never
+reaches production.
 
 ## Repo layout
 
 ```
 rules/                         Sigma detection rules (YAML)
 rules_toml/                    Elastic-style detection rules (TOML, KQL, ECS)
+scripts/convert_rules.sh       Sigma -> Elastic Lucene, writes build/*.lucene
+build/                         Converted query artifacts (gitignored, CI-generated)
 tests/
-  sigma_eval.py                minimal Sigma evaluator
+  sigma_eval.py                minimal Sigma evaluator (fields, modifiers, and/or/not conditions)
   kql_eval.py                  minimal KQL evaluator (for TOML rules)
   validate_toml.py             TOML schema + ATT&CK validator (CI gate)
   test_rules.py                tests over every Sigma rule
   test_toml_rules.py           tests over every TOML rule
   samples/<rule-stem>/         positive.json / negative.json  (Sigma)
   samples_toml/<rule-stem>/    positive.json / negative.json  (TOML, ECS fields)
-.github/workflows/ci.yml       validate + test on every push/PR
+.github/workflows/ci.yml       validate + convert + test on every push/PR
 ```
 
 ## Current detections
@@ -64,14 +71,17 @@ tests/
 |------|:-----:|:----:|--------|-------|
 | Suspicious PowerShell EncodedCommand Execution | ✓ | ✓ | T1059.001 | high |
 | AWS Root Account Console Login | ✓ | ✓ | T1078.004 | high |
+| AWS Console Login Without MFA | ✓ | ✓ | T1078.004 | high |
+| IAM Policy Attached to a User | ✓ | ✓ | T1098.001 | medium |
 
 ## Run it locally
 
 ```bash
 pip install -r requirements.txt
-sigma check rules/             # validate Sigma syntax + schema
-python tests/validate_toml.py  # validate Elastic TOML rules
-pytest -v                      # run all detection unit tests
+sigma check rules/              # validate Sigma syntax + schema
+python tests/validate_toml.py   # validate Elastic TOML rules
+./scripts/convert_rules.sh      # convert Sigma -> Elastic Lucene into build/
+pytest -v                       # run all detection unit tests
 ```
 
 ## Add a new detection
@@ -80,11 +90,20 @@ pytest -v                      # run all detection unit tests
    `rules_toml/your_rule.toml` (Elastic).
 2. Add `positive.json` (events it should catch) and `negative.json` (events it
    should ignore) under the matching `tests/samples*/your_rule/` directory.
-3. Run `pytest -v` until green, then open a PR.
+3. Run `sigma check rules/`, `./scripts/convert_rules.sh`, and `pytest -v`
+   until everything is green, then open a PR. CI re-runs the same three gates
+   on every push.
 
 ## Convert a Sigma rule to your SIEM
 
 ```bash
-pip install pysigma-backend-elasticsearch
-sigma convert -t lucene rules/windows_powershell_encodedcommand.yml
+sigma convert -t lucene rules/windows_powershell_encodedcommand.yml -p ecs_windows
 ```
+
+## Impact
+
+Every one of the 4 shipped rules carries both a true-positive and a
+true-negative fixture; CI runs 20 assertions per push and blocks the merge if
+any rule fires on the wrong event or fails to convert to Elastic — turning
+"did this detection actually work?" from a question asked during an incident
+into one answered automatically before the rule ever reaches production.
