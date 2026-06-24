@@ -1,0 +1,65 @@
+{
+  "name": "Detection-as-Code ATT&CK Coverage",
+  "versions": {
+    "attack": "15",
+    "navigator": "4.9.1",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "Auto-generated from rules/*.yml ATT&CK tags. Do not edit by hand.",
+  "techniques": [
+    {
+      "techniqueID": "T1059.001",
+      "tactic": "execution",
+      "score": 1,
+      "color": "",
+      "comment": "Covered by: windows_powershell_encodedcommand",
+      "enabled": true,
+      "metadata": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1078.004",
+      "tactic": "initial-access",
+      "score": 2,
+      "color": "",
+      "comment": "Covered by: aws_console_login_without_mfa, aws_root_console_login",
+      "enabled": true,
+      "metadata": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1098.001",
+      "tactic": "persistence",
+      "score": 1,
+      "color": "",
+      "comment": "Covered by: aws_iam_policy_attached_to_user",
+      "enabled": true,
+      "metadata": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1098.001",
+      "tactic": "privilege-escalation",
+      "score": 1,
+      "color": "",
+      "comment": "Covered by: aws_iam_policy_attached_to_user",
+      "enabled": true,
+      "metadata": [],
+      "showSubtechniques": false
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ffffff",
+      "#66b1ff",
+      "#0d4a90"
+    ],
+    "minValue": 0,
+    "maxValue": 2
+  },
+  "legendItems": [],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#dddddd",
+  "sorting": 0
+}

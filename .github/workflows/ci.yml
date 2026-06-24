@@ -6,14 +6,23 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: "3.12"
 
@@ -28,14 +37,22 @@ jobs:
       - name: Validate Elastic TOML rules (schema + ATT&CK)
         run: python tests/validate_toml.py
 
-      - name: Convert Sigma rules to Elastic Lucene queries
+      - name: Detection-hygiene gate (metadata + test fixtures)
+        run: python scripts/check_hygiene.py
+
+      - name: Convert Sigma rules to Elastic, Splunk, and Sentinel queries
         run: ./scripts/convert_rules.sh
 
       - name: Run detection unit tests (Sigma + TOML)
         run: pytest -v
 
-      - name: Upload converted Elastic queries
-        uses: actions/upload-artifact@v4
+      - name: Upload converted SIEM queries
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         with:
-          name: elastic-lucene-queries
+          name: converted-siem-queries
           path: build/
+
+      - name: Secret scan (gitleaks)
+        uses: gitleaks/gitleaks-action@44c470ffc35caa8b1eb3e8012ca53c2f9bea4eb5 # v2.3.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

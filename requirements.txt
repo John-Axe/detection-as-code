@@ -2,4 +2,6 @@ pyyaml>=6.0
 pytest>=8.0
 sigma-cli>=1.0
 pysigma-backend-elasticsearch>=1.0
+pysigma-backend-splunk>=2.0
+pysigma-backend-kusto>=0.1
 tomli>=2.0 ; python_version < "3.11"
